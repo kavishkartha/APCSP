@@ -160,6 +160,15 @@ def spaceshipCollision(x1, y1, width1, height1, x2, y2, width2, height2):
         else:
             return False
 
+# IntroLoop Method:
+def introPlayedMethod():
+    played = open("playerScore.txt", "r")
+    playedData = played.read()
+    playedList = []
+    playedList.append(playedData)
+    playedList2 = listSplitMethod(playedList)
+    return len(playedList2)
+
 # Game:
 def gameLoop():
     # Objects:
@@ -196,6 +205,24 @@ def gameLoop():
         if len(fireballList) < 4:
             fireballList.append(fireballClass(random.randrange((spaceship.spaceShipWidth // 2), (gameWindowWidth - (spaceship.spaceShipWidth))), 1))
             
+        # Key Presses:
+        keyPressed = pygame.key.get_pressed()
+        def keyPresses():
+            if keyPressed[pygame.K_LEFT] == True and spaceship.spaceShipx >= 0:
+                spaceship.spaceshipLeft()
+            elif keyPressed[pygame.K_RIGHT] == True and spaceship.spaceShipx <= gameWindowWidth - spaceship.spaceShipWidth:
+                spaceship.spaceshipRight()
+            elif keyPressed[pygame.K_UP] == True and spaceship.spaceShipy >= 0:
+                spaceship.spaceshipUp()
+            elif keyPressed[pygame.K_DOWN] == True and spaceship.spaceShipy <= gameWindowHeight - spaceship.spaceShipHeight:
+                spaceship.spaceshipDown()
+            elif keyPressed[pygame.K_SPACE] == True:
+                playBulletSoundEffect()
+                if len(bulletList) < 25:
+                    bulletList.append(bulletClass(round(spaceship.spaceShipx + spaceship.spaceShipWidth // 2), spaceship.spaceShipy))
+        keyPresses()
+
+        # Collisions and Crashing:
         for bullet in bulletList:
             for fireball in fireballList:
                 collision = bulletCollision(bullet.bulletx, bullet.bullety, bullet.bulletWidth, bullet.bulletHeight, fireball.fireballx, fireball.firebally, fireball.fireballWidth, fireball.fireballHeight)
@@ -226,21 +253,6 @@ def gameLoop():
         scoreDisplayText = scoreText.textDisplay()
         highScoreText = textClass("High Score: " + str(playerHighScore), red, 15)
         highScoreDisplayText = highScoreText.textDisplay()
-
-        # Key Presses:
-        keyPressed = pygame.key.get_pressed()
-        if keyPressed[pygame.K_LEFT] == True and spaceship.spaceShipx >= 0:
-            spaceship.spaceshipLeft()
-        if keyPressed[pygame.K_RIGHT] == True and spaceship.spaceShipx <= gameWindowWidth - spaceship.spaceShipWidth:
-            spaceship.spaceshipRight()
-        if keyPressed[pygame.K_UP] == True and spaceship.spaceShipy >= 0:
-            spaceship.spaceshipUp()
-        if keyPressed[pygame.K_DOWN] == True and spaceship.spaceShipy <= gameWindowHeight - spaceship.spaceShipHeight:
-            spaceship.spaceshipDown()
-        if keyPressed[pygame.K_SPACE] == True:
-            playBulletSoundEffect()
-            if len(bulletList) < 25:
-                bulletList.append(bulletClass(round(spaceship.spaceShipx + spaceship.spaceShipWidth // 2), spaceship.spaceShipy))
             
         gameWindow.blit(background, (0, 0))
         spaceship.drawSpaceShip()
@@ -252,15 +264,6 @@ def gameLoop():
         gameWindow.blit(highScoreDisplayText, (392, 35))
         pygame.display.update()
     pygame.quit()
-
-
-def introPlayedMethod():
-    played = open("playerScore.txt", "r")
-    playedData = played.read()
-    playedList = []
-    playedList.append(playedData)
-    playedList2 = listSplitMethod(playedList)
-    return len(playedList2)
 
 def introLoop():
     # Main Loop    
