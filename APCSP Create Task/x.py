@@ -157,8 +157,27 @@ def spaceshipCollision(x1, y1, width1, height1, x2, y2, width2, height2):
     elif x1 <= x2 <= x1 + width1 and x1 <= x2 + width2 <= x1 + width1:
         if y1 <= y2 + height2 <= y1 + height1 and y1 <= y2 + height2 <= y1 + height1:
             return True 
-        else:
-            return False
+    else:
+        return False
+
+# Key Presses:
+def keyPresses(obj):
+    keyPressed = pygame.key.get_pressed()
+    if keyPressed[pygame.K_LEFT] == True and obj.spaceShipx >= 0:
+        obj.spaceshipLeft()
+    elif keyPressed[pygame.K_RIGHT] == True and obj.spaceShipx <= gameWindowWidth - obj.spaceShipWidth:
+        obj.spaceshipRight()
+    elif keyPressed[pygame.K_UP] == True and obj.spaceShipy >= 0:
+        obj.spaceshipUp()
+    elif keyPressed[pygame.K_DOWN] == True and obj.spaceShipy <= gameWindowHeight - obj.spaceShipHeight:
+        obj.spaceshipDown()
+
+def moveBullets(list, obj):
+    keyPressed = pygame.key.get_pressed()
+    if keyPressed[pygame.K_SPACE] == True:
+        playBulletSoundEffect()
+        if len(list) < 25:
+            list.append(bulletClass(round(obj.spaceShipx + obj.spaceShipWidth // 2), obj.spaceShipy))
 
 # IntroLoop Method:
 def introPlayedMethod():
@@ -168,6 +187,7 @@ def introPlayedMethod():
     playedList.append(playedData)
     playedList2 = listSplitMethod(playedList)
     return len(playedList2)
+
 
 # Game:
 def gameLoop():
@@ -204,23 +224,9 @@ def gameLoop():
                 fireball.fireballPlus = True
         if len(fireballList) < 4:
             fireballList.append(fireballClass(random.randrange((spaceship.spaceShipWidth // 2), (gameWindowWidth - (spaceship.spaceShipWidth))), 1))
-            
-        # Key Presses:
-        keyPressed = pygame.key.get_pressed()
-        def keyPresses():
-            if keyPressed[pygame.K_LEFT] == True and spaceship.spaceShipx >= 0:
-                spaceship.spaceshipLeft()
-            elif keyPressed[pygame.K_RIGHT] == True and spaceship.spaceShipx <= gameWindowWidth - spaceship.spaceShipWidth:
-                spaceship.spaceshipRight()
-            elif keyPressed[pygame.K_UP] == True and spaceship.spaceShipy >= 0:
-                spaceship.spaceshipUp()
-            elif keyPressed[pygame.K_DOWN] == True and spaceship.spaceShipy <= gameWindowHeight - spaceship.spaceShipHeight:
-                spaceship.spaceshipDown()
-            elif keyPressed[pygame.K_SPACE] == True:
-                playBulletSoundEffect()
-                if len(bulletList) < 25:
-                    bulletList.append(bulletClass(round(spaceship.spaceShipx + spaceship.spaceShipWidth // 2), spaceship.spaceShipy))
-        keyPresses()
+        
+        moveBullets(bulletList, spaceship)
+        keyPresses(spaceship)
 
         # Collisions and Crashing:
         for bullet in bulletList:
@@ -264,6 +270,7 @@ def gameLoop():
         gameWindow.blit(highScoreDisplayText, (392, 35))
         pygame.display.update()
     pygame.quit()
+
 
 def introLoop():
     # Main Loop    
